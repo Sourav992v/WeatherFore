@@ -1,0 +1,34 @@
+<resources>
+
+   <!-- Base application theme. -->
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/green_600</item>
+        <item name="colorPrimaryDark">@color/green_900</item>
+        <item name="colorAccent">@color/green_A400</item>
+
+        <!--Theme for the preference-->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
+    <!-- Main activity theme. -->
+    <style name="ForecastTheme" parent="AppTheme">
+        <item name="actionBarStyle">@style/ActionBar.Solid.WeatherFore.NoTitle</item>
+    </style>
+
+
+    <!-- main activity action bar styles -->
+    <style name="ActionBar.Solid.WeatherFore.NoTitle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="displayOptions">useLogo|showHome</item>
+        <item name="logo">@drawable/ic_logo</item>
+    </style>
+
+    <style name="WelcomeActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:actionBarStyle">@style/Theme.AppCompat.Light.NoActionBar</item>
+    </style>
+    <!-- Style for forecast listview -->
+    <style name="ForecastListStyle">
+        <!-- Here it's a stub.  In screens of sufficient width, this style includes modifications
+        for two-pane layout -->
+    </style>
+
+</resources>

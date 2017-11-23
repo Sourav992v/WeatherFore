@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="list_item_icon">List Item Icon</string>
+    <string name="list_item_forecast_imageview">List Item Forecast ImageView</string>
+    <string name="weather_notification_channel_name">Weather Notification Channel Nmae</string>
+</resources>
