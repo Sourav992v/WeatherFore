@@ -3,6 +3,8 @@ package com.sourav.weatherfore.sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.text.format.DateUtils;
 
 import com.sourav.weatherfore.db.WeatherContract;
@@ -10,6 +12,8 @@ import com.sourav.weatherfore.db.WeatherPreferences;
 import com.sourav.weatherfore.utilities.NetworkUtils;
 import com.sourav.weatherfore.utilities.NotificationUtils;
 import com.sourav.weatherfore.utilities.OpenWeatherJsonUtils;
+import com.sourav.weatherfore.utilities.WeatherUtils;
+import com.sourav.weatherfore.wallpaper.WeatherMuzeiSource;
 
 import java.net.URL;
 import java.util.TimeZone;
@@ -55,6 +59,8 @@ class SyncTask {
                  ContentResolver weatherForeContentResolver = context.getContentResolver();
                  // If we have valid results, delete the old data and insert the new
                 /* Delete old weather data because we don't need to keep multiple days' data */
+
+                WeatherUtils.getPreferredLocation(context);
 
                 weatherForeContentResolver.delete(
                         WeatherContract.WeatherEntry.CONTENT_URI,
@@ -102,4 +108,6 @@ class SyncTask {
             e.printStackTrace();
         }
     }
+
+
 }
