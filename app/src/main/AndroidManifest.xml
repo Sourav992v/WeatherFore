@@ -106,6 +106,7 @@
             <meta-data android:name="android.service.wallpaper"
                 android:value="@color/primary" />
         </service>
+
         <!-- Today Widget -->
         <receiver
             android:name=".widget.TodayWidgetProvider"
@@ -130,6 +131,7 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info_detail" />
         </receiver>
+
         <service
             android:name=".widget.DetailWidgetRemoteViewsService"
             android:enabled="@bool/widget_detail_enabled"
