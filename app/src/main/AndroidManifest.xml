@@ -12,20 +12,30 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
+    <!-- Permissions required to make our UI more friendly -->
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <!-- Permissions required by the sync adapter -->
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCrA1BpQZaYtzjbWJ1M5V_32qcg9yrx5jk"/>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/ForecastTheme"
+            android:theme="@style/AppTheme.Main"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,6 +46,8 @@
         <activity
             android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
+            android:theme="@style/AppTheme.Details"
+            android:icon="@drawable/ic_logo"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -82,7 +94,47 @@
         </service>
         <service android:name=".sync.FirebaseJobService" />
 
-
+        <!-- Muzei Extension -->
+        <service android:name=".wallpaper.WeatherMuzeiSource"
+            android:icon="@drawable/ic_muzei"
+            android:label="@string/app_name"
+            android:description="@string/muzei_description"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="com.google.android.apps.muzei.api.MuzeiArtSource" />
+            </intent-filter>
+            <meta-data android:name="android.service.wallpaper"
+                android:value="@color/primary" />
+        </service>
+        <!-- Today Widget -->
+        <receiver
+            android:name=".widget.TodayWidgetProvider"
+            android:label="@string/title_widget_today" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.sourav.weatherfore.ACTION_DATA_UPDATED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_today" />
+        </receiver>
+        <service android:name=".widget.TodayWidgetIntentService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+        <receiver
+            android:name=".widget.DetailWidgetProvider"
+            android:label="@string/title_widget_detail"
+            android:enabled="@bool/widget_detail_enabled" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.sourav.weatherfore.ACTION_DATA_UPDATED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_detail" />
+        </receiver>
+        <service
+            android:name=".widget.DetailWidgetRemoteViewsService"
+            android:enabled="@bool/widget_detail_enabled"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>
