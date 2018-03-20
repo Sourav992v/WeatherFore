@@ -164,5 +164,10 @@ public class WeatherContract {
             long normalizedUtcNow = WeatherDateUtils.normalizeDate(System.currentTimeMillis());
             return WeatherContract.WeatherEntry.COLUMN_DATE + " >= " + normalizedUtcNow;
         }
+
+        public static Uri buildWeatherLocationWithDate(String locationSetting, Long date) {
+            return CONTENT_URI.buildUpon().appendPath(locationSetting)
+                    .appendPath(Long.toString(normalizeDate(date))).build();
+        }
     }
 }
