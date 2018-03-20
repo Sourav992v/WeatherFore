@@ -153,6 +153,7 @@ public class WeatherContract {
             else
                 return 0;
         }
+
         /**
          * Returns just the selection part of the weather query from a normalized today value.
          * This is used to get a weather forecast from today's date. To make this easy to use
