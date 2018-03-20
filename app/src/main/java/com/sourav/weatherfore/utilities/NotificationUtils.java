@@ -125,7 +125,7 @@ public class NotificationUtils {
             // notifications.  Just throw in some data.
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(context, WEATHER_NOTIFICATION_CHANNEL_ID)
-                            .setColor(resources.getColor(R.color.green_900))
+                            .setColor(resources.getColor(R.color.accent))
                             .setSmallIcon(smallArtResourceId)
                             .setLargeIcon(largeIcon)
                             .setContentTitle(notificationTitle)

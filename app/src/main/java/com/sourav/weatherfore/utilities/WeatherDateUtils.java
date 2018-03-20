@@ -79,7 +79,7 @@ public class WeatherDateUtils {
          * extracting this information from the database.
          */
 
-        return TimeUnit.DAYS.toMillis(daysSinceEpochLocal);
+        return TimeUnit.DAYS.toMillis(daysSinceEpochLocal) + DAY_IN_MILLIS;
     }
 
     /**

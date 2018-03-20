@@ -8,6 +8,7 @@ import android.net.Uri;
 
 import com.sourav.weatherfore.db.WeatherContract;
 import com.sourav.weatherfore.db.WeatherPreferences;
+import com.sourav.weatherfore.sync.SyncUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,12 +77,15 @@ public class OpenWeatherJsonUtils {
 
             switch (errorCode) {
                 case HttpURLConnection.HTTP_OK:
+                    WeatherUtils.setLocationStatus(context, SyncUtils.LOCATION_STATUS_OK);
                     break;
                 case HttpURLConnection.HTTP_NOT_FOUND:
                     /* Location invalid */
+                    WeatherUtils.setLocationStatus(context, SyncUtils.LOCATION_STATUS_INVALID);
                     return null;
                 default:
                     /* Server probably down */
+                    WeatherUtils.setLocationStatus(context, SyncUtils.LOCATION_STATUS_SERVER_DOWN);
                     return null;
             }
         }

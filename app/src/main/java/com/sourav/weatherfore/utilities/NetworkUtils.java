@@ -57,6 +57,7 @@ public class NetworkUtils {
 
     private static final String APPID_PARAM = "APPID";
 
+
     /**
      * Retrieves the proper URL to query for the weather data. The reason for both this method as
      * well as {@link #buildUrlWithLocationQuery(String)} is two fold.
@@ -145,6 +146,11 @@ public class NetworkUtils {
      * @throws IOException Related to network and stream reading
      */
     public static String getResponseFromHttpUrl(URL url) throws IOException {
+
+       String response = "";
+        if (url == null){
+            return response;
+        }
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestMethod("GET");
         urlConnection.connect();
@@ -156,7 +162,6 @@ public class NetworkUtils {
             scanner.useDelimiter("\\A");
 
             boolean hasInput = scanner.hasNext();
-            String response = null;
             if (hasInput) {
                 response = scanner.next();
             }
