@@ -1,127 +1,32 @@
 <!-- Master layout. -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/today_layout_scrim_gradient">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:gravity="center_vertical"
-        android:layout_gravity="start"
-        android:layout_height="wrap_content"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:padding="30dp">
-
-
-        <!-- Header: Day, Date -->
-        <TextView
-            android:fontFamily="sans-serif-condensed"
-            android:id="@+id/detail_day_textview"
-            android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white">
+        <ImageView
             android:layout_width="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:layout_height="?attr/listPreferredItemHeight"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/app_name"
+            android:scaleType="center"
+            android:src="@drawable/ic_logo"/>
+    </android.support.v7.widget.Toolbar>
 
-        <TextView
-            android:fontFamily="sans-serif-condensed"
-            android:id="@+id/detail_date_textview"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+    <include layout="@layout/detail_today_grid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3" />
 
-        <!-- Main content: high, low, art, weather state -->
-        <LinearLayout
-            android:gravity="center_horizontal"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:layout_width="match_parent"
-            android:orientation="horizontal">
+    <include layout="@layout/detail_extras_grid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"/>
 
-            <LinearLayout
-                android:gravity="start"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:fontFamily="sans-serif-light"
-                    android:id="@+id/detail_high_textview"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="96sp" />
-
-                <TextView
-                    android:id="@+id/detail_low_textview"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="48sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:gravity="center_horizontal"
-                android:layout_gravity="center"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:orientation="vertical"
-                tools:ignore="UseCompoundDrawables">
-
-                <ImageView
-                    android:id="@+id/detail_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/detail_forecast_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Humidity, wind, pressure -->
-        <LinearLayout
-            android:layout_height="match_parent"
-            android:layout_marginEnd="0dp"
-            android:layout_marginTop="16dp"
-            android:layout_width="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/detail_humidity_textview"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:textColor="@color/white"
-                android:textAppearance="?android:textAppearanceLarge" />
-
-            <TextView
-                android:id="@+id/detail_pressure_textview"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_width="match_parent"
-                android:textColor="@color/white"
-                android:textAppearance="?android:textAppearanceLarge" />
-
-            <TextView
-                android:id="@+id/detail_wind_textview"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_width="match_parent"
-                android:textColor="@color/white"
-                android:textAppearance="?android:textAppearanceLarge" />
-            <TextView
-                android:fontFamily="sans-serif-condensed"
-                android:id="@+id/detail_city_textview"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="40sp" />
-
-        </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>
