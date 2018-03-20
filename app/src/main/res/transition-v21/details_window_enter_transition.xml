@@ -18,5 +18,4 @@
             <target android:targetId="@id/detail_additional_pane" />
         </targets>
     </slide>
-
 </transitionSet>

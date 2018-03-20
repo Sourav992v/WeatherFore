@@ -6,4 +6,5 @@
     <dimen name="detail_view_padding_vertical">@dimen/abc_list_item_padding_horizontal_material</dimen>
     <!-- Extra Padding - This one actually smaller on tablets -->
     <dimen name="detail_view_extra_padding">0dp</dimen>
+
 </resources>

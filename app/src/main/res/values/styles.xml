@@ -27,6 +27,7 @@
     <style name="WelcomeActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:actionBarStyle">@style/Theme.AppCompat.Light.NoActionBar</item>
     </style>
+
     <!-- Style for forecast listview -->
     <style name="ForecastListStyle">
         <!-- Here it's a stub.  In screens of sufficient width, this style includes modifications
