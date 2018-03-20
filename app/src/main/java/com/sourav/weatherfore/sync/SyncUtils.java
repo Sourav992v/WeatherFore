@@ -65,9 +65,9 @@ public class SyncUtils {
         Driver driver = new GooglePlayDriver(context);
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
 
-         /* Create the Job to periodically sync Sunshine */
+         /* Create the Job to periodically sync weather */
         Job syncJob = dispatcher.newJobBuilder()
-                /* The Service that will be used to sync Sunshine's data */
+                /* The Service that will be used to sync weather data */
                 .setService(FirebaseJobService.class)
                 /* Set the UNIQUE tag used to identify this Job */
                 .setTag(WEATHERFORE_SYNC_TAG)
@@ -130,7 +130,7 @@ public class SyncUtils {
 
         //Call the method you created to schedule a periodic weather sync
         /*
-         * This method call triggers Sunshine to create its task to synchronize weather data
+         * This method call triggers WeatherFore to create its task to synchronize weather data
          * periodically.
          */
 
