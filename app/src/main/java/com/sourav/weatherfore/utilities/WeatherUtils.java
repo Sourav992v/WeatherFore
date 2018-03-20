@@ -537,5 +537,4 @@ public class WeatherUtils {
         spe.putInt(c.getString(R.string.pref_location_status_key), locationStatus);
         spe.apply();
     }
-
 }

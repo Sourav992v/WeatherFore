@@ -97,7 +97,7 @@ public class WeatherDateUtils {
     /**
      * Normalizes a date (in milliseconds).
      *
-     * Normalize, in our usage within Sunshine means to convert a given date in milliseconds to
+     * Normalize, in our usage within WeatherFore means to convert a given date in milliseconds to
      * the very beginning of the date in UTC time.
      *
      *   For example, given the time representing

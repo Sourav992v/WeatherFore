@@ -221,7 +221,6 @@ public class OpenWeatherJsonUtils {
         if (locationCursor != null) {
             locationCursor.close();
         }
-        // Wait, that worked?  Yes!
         return locationId;
     }
 

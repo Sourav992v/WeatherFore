@@ -64,7 +64,7 @@ public class NetworkUtils {
      * <p>
      * 1) You should be able to just use one method when you need to create the URL within the
      * app instead of calling both methods.
-     * 2) Later in Sunshine, you are going to add an alternate method of allowing the user
+     * 2) Later in WeatherFore, you are going to add an alternate method of allowing the user
      * to select their preferred location. Once you do so, there will be another way to form
      * the URL using a latitude and longitude rather than just a location String. This method
      * will "decide" which URL to build and return it.

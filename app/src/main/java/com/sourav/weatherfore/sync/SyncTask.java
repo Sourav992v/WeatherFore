@@ -67,6 +67,7 @@ class SyncTask {
                         null,
                         null);
 
+
                 weatherForeContentResolver.bulkInsert(
                         WeatherContract.WeatherEntry.CONTENT_URI,
                         weatherValues);

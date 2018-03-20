@@ -138,7 +138,6 @@ public class NotificationUtils {
             }
             mBuilder.setContentIntent(contentIntent(context));
 
-
             // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
             if (mNotificationManager != null) {
                 mNotificationManager.notify(WEATHER_NOTIFICATION_ID, mBuilder.build());
