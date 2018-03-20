@@ -3,10 +3,12 @@ package com.sourav.weatherfore;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.sourav.weatherfore.db.WeatherPreferences;
 
 
 public class DetailActivity extends AppCompatActivity {
@@ -22,6 +24,7 @@ public class DetailActivity extends AppCompatActivity {
 
             Bundle arguments = new Bundle();
             arguments.putParcelable(DetailFragment.DETAIL_URI, getIntent().getData());
+            arguments.putBoolean(DetailFragment.DETAIL_TRANSITION_ANIMATION, true);
 
             DetailFragment fragment = new DetailFragment();
             fragment.setArguments(arguments);
@@ -29,6 +32,9 @@ public class DetailActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.weather_detail_container, fragment)
                     .commit();
+
+            // Being here means we are in animation mode
+            supportPostponeEnterTransition();
         }
     }
 
@@ -51,5 +57,14 @@ public class DetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(WeatherPreferences.getPreferredWeatherLocation(this));
+        }
     }
 }
