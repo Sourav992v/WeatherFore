@@ -1,17 +1,29 @@
 
 package com.sourav.weatherfore;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.sourav.weatherfore.db.WeatherContract;
 import com.sourav.weatherfore.db.WeatherPreferences;
 import com.sourav.weatherfore.sync.SyncUtils;
+import com.sourav.weatherfore.wallpaper.WeatherMuzeiSource;
+import com.sourav.weatherfore.widget.DetailWidgetProvider;
+import com.sourav.weatherfore.widget.TodayWidgetProvider;
 
 public class MainActivity extends AppCompatActivity implements
         ForecastFragment.Callback{
@@ -30,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements
         mLocation = WeatherPreferences.getPreferredWeatherLocation(this);
 
         setContentView(R.layout.activity_main);
+
+        Uri contentUri = getIntent() != null ? getIntent().getData() : null;
+
         if (findViewById(R.id.weather_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
@@ -39,6 +54,12 @@ public class MainActivity extends AppCompatActivity implements
             // adding or replacing the detail fragment using a
             // fragment transaction.
             if (savedInstanceState == null) {
+                DetailFragment fragment = new DetailFragment();
+                if (contentUri != null) {
+                    Bundle args = new Bundle();
+                    args.putParcelable(DetailFragment.DETAIL_URI, contentUri);
+                    fragment.setArguments(args);
+                }
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.weather_detail_container, new DetailFragment(), DETAIL_FRAGMENT_TAG)
                         .commit();
@@ -55,8 +76,12 @@ public class MainActivity extends AppCompatActivity implements
                 .findFragmentById(R.id.fragment_forecast));
         forecastFragment.setUseTodayLayout(!mTwoPane);
 
-        SyncUtils.initialize(this);
+        if (contentUri != null) {
+            forecastFragment.setInitialSelectedDate(
+                    WeatherContract.WeatherEntry.getDateFromUri(contentUri));
+        }
 
+        SyncUtils.initialize(this);
     }
 
 
@@ -131,10 +156,17 @@ public class MainActivity extends AppCompatActivity implements
             }
             mLocation = location;
         }
+        updateMuzei();
+        updateWidgets();
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(location);
+        }
     }
 
     @Override
-    public void onItemSelected(Uri contentUri) {
+    public void onItemSelected(Uri contentUri, ForecastAdapter.ForecastViewHolder vh) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
@@ -151,8 +183,26 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
                     .setData(contentUri);
-            startActivity(intent);
+            ActivityOptionsCompat activityOptions =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                            new Pair<View, String>(vh.mIconView, getString(R.string.detail_icon_transition_name)));
+            ActivityCompat.startActivity(this, intent, activityOptions.toBundle());
         }
+    }
+
+    private void updateWidgets() {
+
+        Context context = getApplicationContext();
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(SyncUtils.ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
+    }
+
+    private void updateMuzei() {
+        Context context = getApplicationContext();
+        context.startService(new Intent(SyncUtils.ACTION_DATA_UPDATED)
+                .setClass(context, WeatherMuzeiSource.class));
     }
 
 }
