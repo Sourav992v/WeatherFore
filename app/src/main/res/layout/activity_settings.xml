@@ -9,7 +9,5 @@
         android:name="com.sourav.weatherfore.SettingsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    </fragment>
+        android:orientation="vertical"/>
 </LinearLayout>

@@ -70,4 +70,5 @@
         android:textColor="@android:color/white"
         app:layout_gravity="fill"
         tools:text="4km/h NW" />
+
 </android.support.v7.widget.GridLayout>

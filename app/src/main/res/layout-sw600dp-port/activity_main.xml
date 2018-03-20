@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!-- RelativeLayout is a nice choice when we're playing with elevations because it allows us to
      flexibly place layouts all in the same drawing layer -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

@@ -37,7 +37,6 @@
                 app:layout_scrollFlags="scroll|enterAlways" />
         </android.support.v7.widget.Toolbar>
 
-
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView

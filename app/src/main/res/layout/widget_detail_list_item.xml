@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!-- Layout for weather forecast list item for future day (not today) -->
 <!-- Make the background of our selector a non-transparent color -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

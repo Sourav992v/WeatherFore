@@ -9,4 +9,5 @@
     <include layout="@layout/today_forecast_list_item_base"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
 </FrameLayout>
