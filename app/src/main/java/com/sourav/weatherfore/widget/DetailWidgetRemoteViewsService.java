@@ -102,8 +102,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 int weatherId = data.getInt(INDEX_WEATHER_CONDITION_ID);
                 int weatherArtResourceId = WeatherUtils.getSmallArtResourceIdForWeatherCondition(weatherId);
                 Bitmap weatherArtImage = null;
-                String weatherArtResourceUrl = WeatherUtils.getArtUrlForWeatherCondition(
-                        DetailWidgetRemoteViewsService.this, weatherId);
+                String weatherArtResourceUrl = WeatherUtils.getArtUrlForWeatherCondition(weatherId);
                 try {
                     weatherArtImage = Glide.with(DetailWidgetRemoteViewsService.this)
                             .load(weatherArtResourceUrl)
@@ -116,7 +115,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 String description = data.getString(INDEX_WEATHER_DESC);
                 long dateInMillis = data.getLong(INDEX_WEATHER_DATE);
                 String formattedDate = WeatherDateUtils.getFriendlyDateString(
-                        DetailWidgetRemoteViewsService.this, dateInMillis, false);
+                        DetailWidgetRemoteViewsService.this, dateInMillis);
                 double maxTemp = data.getDouble(INDEX_WEATHER_MAX_TEMP);
                 double minTemp = data.getDouble(INDEX_WEATHER_MIN_TEMP);
                 String formattedMaxTemperature =

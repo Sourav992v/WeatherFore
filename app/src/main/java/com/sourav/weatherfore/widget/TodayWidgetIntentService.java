@@ -71,7 +71,7 @@ public class TodayWidgetIntentService extends IntentService {
         }
 
         int weatherId = data.getInt(INDEX_WEATHER_ID);
-        int weatherArtResourceId = WeatherUtils.getArtResourceForWeatherCondition(weatherId);
+        int weatherArtResourceId = WeatherUtils.getSmallArtResourceIdForWeatherCondition(weatherId);
         String description = data.getString(INDEX_SHORT_DESC);
         double maxTemp = data.getDouble(INDEX_MAX_TEMP)  ;
         double minTemp = data.getDouble(INDEX_MIN_TEMP) ;
