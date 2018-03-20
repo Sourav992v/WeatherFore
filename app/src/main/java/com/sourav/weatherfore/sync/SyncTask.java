@@ -105,6 +105,7 @@ class SyncTask {
              }
         }catch (Exception e){
              /* Server probably invalid */
+
             e.printStackTrace();
         }
     }
