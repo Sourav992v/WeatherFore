@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.sourav.weatherfore.BuildConfig;
 import com.sourav.weatherfore.db.WeatherPreferences;
+import com.sourav.weatherfore.sync.SyncUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,9 +20,6 @@ import java.util.Scanner;
  */
 
 public class NetworkUtils {
-
-    private static final String TAG = NetworkUtils.class.getSimpleName();
-
 
     private static final String STATIC_WEATHER_URL =
             "http://api.openweathermap.org/data/2.5/forecast/daily?";
@@ -103,9 +101,7 @@ public class NetworkUtils {
                 .build();
 
         try {
-            URL weatherQueryUrl = new URL(weatherQueryUri.toString());
-            Log.v(TAG, "URL: " + weatherQueryUrl);
-            return weatherQueryUrl;
+            return new URL(weatherQueryUri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
@@ -129,9 +125,7 @@ public class NetworkUtils {
                 .build();
 
         try {
-            URL weatherQueryUrl = new URL(weatherQueryUri.toString());
-            Log.v(TAG, "URL: " + weatherQueryUrl);
-            return weatherQueryUrl;
+            return new URL(weatherQueryUri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
@@ -147,28 +141,39 @@ public class NetworkUtils {
      */
     public static String getResponseFromHttpUrl(URL url) throws IOException {
 
-       String response = "";
-        if (url == null){
+        String response = "";
+        if (url == null) {
             return response;
         }
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        urlConnection.setRequestMethod("GET");
-        urlConnection.connect();
+
+        HttpURLConnection urlConnection = null;
+        InputStream in = null;
 
         try {
-            InputStream in = urlConnection.getInputStream();
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setReadTimeout(10000);
+            urlConnection.setConnectTimeout(15000);
+            urlConnection.connect();
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                in = urlConnection.getInputStream();
+                Scanner scanner = new Scanner(in);
+                scanner.useDelimiter("\\A");
 
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-
-            boolean hasInput = scanner.hasNext();
-            if (hasInput) {
-                response = scanner.next();
+                boolean hasInput = scanner.hasNext();
+                if (hasInput) {
+                    response = scanner.next();
+                }
+                scanner.close();
             }
-            scanner.close();
-            return response;
         } finally {
-            urlConnection.disconnect();
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (in != null) {
+                in.close();
+            }
         }
+        return response;
     }
 }

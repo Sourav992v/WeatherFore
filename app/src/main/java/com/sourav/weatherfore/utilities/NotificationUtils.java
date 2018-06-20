@@ -27,7 +27,7 @@ public class NotificationUtils {
     * The columns of data that we are interested in displaying within our notification to let
     * the user know there is new weather data available.
     */
-    public static final String[] WEATHER_NOTIFICATION_PROJECTION = {
+    private static final String[] WEATHER_NOTIFICATION_PROJECTION = {
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
@@ -119,7 +119,6 @@ public class NotificationUtils {
                     mNotificationManager.createNotificationChannel(mChannel);
                 }
             }
-
 
             // NotificationCompatBuilder is a very convenient way to build backward-compatible
             // notifications.  Just throw in some data.

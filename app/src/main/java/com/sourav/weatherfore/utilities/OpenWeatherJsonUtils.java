@@ -16,6 +16,10 @@ import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 
+import static com.sourav.weatherfore.sync.SyncUtils.LOCATION_STATUS_INVALID;
+import static com.sourav.weatherfore.sync.SyncUtils.LOCATION_STATUS_OK;
+import static com.sourav.weatherfore.sync.SyncUtils.LOCATION_STATUS_SERVER_DOWN;
+
 /**
  * Created by Sourav on 11/20/2017.
  */
@@ -68,6 +72,10 @@ public class OpenWeatherJsonUtils {
     public static ContentValues[] getWeatherContentValuesFromJson(Context context, String forecastJsonStr)
             throws JSONException {
 
+        if (forecastJsonStr.isEmpty()){
+            return null;
+        }
+
         String locationSetting = WeatherPreferences.getPreferredWeatherLocation(context);
         JSONObject forecastJson = new JSONObject(forecastJsonStr);
 
@@ -77,15 +85,15 @@ public class OpenWeatherJsonUtils {
 
             switch (errorCode) {
                 case HttpURLConnection.HTTP_OK:
-                    WeatherUtils.setLocationStatus(context, SyncUtils.LOCATION_STATUS_OK);
+                    SyncUtils.setLocationStatus(context, SyncUtils.LOCATION_STATUS_OK);
                     break;
                 case HttpURLConnection.HTTP_NOT_FOUND:
                     /* Location invalid */
-                    WeatherUtils.setLocationStatus(context, SyncUtils.LOCATION_STATUS_INVALID);
+                    SyncUtils.setLocationStatus(context, SyncUtils.LOCATION_STATUS_INVALID);
                     return null;
                 default:
                     /* Server probably down */
-                    WeatherUtils.setLocationStatus(context, SyncUtils.LOCATION_STATUS_SERVER_DOWN);
+                    SyncUtils.setLocationStatus(context, SyncUtils.LOCATION_STATUS_SERVER_DOWN);
                     return null;
             }
         }

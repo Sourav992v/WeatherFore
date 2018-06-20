@@ -1,16 +1,18 @@
 package com.sourav.weatherfore.utilities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.sourav.weatherfore.R;
 import com.sourav.weatherfore.db.WeatherPreferences;
 import com.sourav.weatherfore.sync.SyncUtils;
 import com.sourav.weatherfore.wallpaper.WeatherMuzeiSource;
+
 
 /**
  * Created by Sourav on 11/20/2017.
@@ -52,26 +54,6 @@ public class WeatherUtils {
 
         /* For presentation, assume the user doesn't care about tenths of a degree. */
         return String.format(context.getString(temperatureFormatResourceId), temperature);
-    }
-
-    /**
-     * This method will format the temperatures to be displayed in the
-     * following form: "HIGH° / LOW°"
-     *
-     * @param context Android Context to access preferences and resources
-     * @param high    High temperature for a day in user's preferred units
-     * @param low     Low temperature for a day in user's preferred units
-     *
-     * @return String in the form: "HIGH° / LOW°"
-     */
-    public static String formatHighLows(Context context, double high, double low) {
-        long roundedHigh = Math.round(high);
-        long roundedLow = Math.round(low);
-
-        String formattedHigh = formatTemperature(context, roundedHigh);
-        String formattedLow = formatTemperature(context, roundedLow);
-
-        return formattedHigh + " / " + formattedLow;
     }
 
     /**
@@ -347,8 +329,6 @@ public class WeatherUtils {
         } else if (weatherId >= 951 && weatherId <= 957) {
             return R.drawable.ic_clear;
         }
-
-        Log.e(LOG_TAG, "Unknown Weather: " + weatherId);
         return R.drawable.ic_storm;
     }
 
@@ -400,51 +380,48 @@ public class WeatherUtils {
         } else if (weatherId >= 951 && weatherId <= 957) {
             return R.drawable.art_clear;
         }
-
-        Log.e(LOG_TAG, "Unknown Weather: " + weatherId);
         return R.drawable.art_storm;
     }
 
-    /**
-     * Helper method to provide the art urls according to the weather condition id returned
-     * by the OpenWeatherMap call.
-     *
-     * @param weatherId from OpenWeatherMap API response
-     * @return url for the corresponding weather artwork. null if no relation is found.
-     */
-    public static String getArtUrlForWeatherCondition(int weatherId) {
 
-        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+    /**
+     * Helper method to provide the art resource id according to the weather condition id returned
+     * by the OpenWeatherMap call.
+     * @param weatherId from OpenWeatherMap API response
+     * @return resource id for the corresponding icon. -1 if no relation is found.
+     */
+    public static int getArtResourceForWeatherCondition(int weatherId) {
+      
         if (weatherId >= 200 && weatherId <= 232) {
-            return "storm";
+            return R.drawable.art_storm;
         } else if (weatherId >= 300 && weatherId <= 321) {
-            return "light_rain";
+            return R.drawable.art_light_rain;
         } else if (weatherId >= 500 && weatherId <= 504) {
-            return "rain";
+            return R.drawable.art_rain;
         } else if (weatherId == 511) {
-            return "snow";
+            return R.drawable.art_snow;
         } else if (weatherId >= 520 && weatherId <= 531) {
-            return "rain";
+            return R.drawable.art_rain;
         } else if (weatherId >= 600 && weatherId <= 622) {
-            return "snow";
+            return R.drawable.art_snow;
         } else if (weatherId >= 701 && weatherId <= 761) {
-            return "fog";
+            return R.drawable.art_fog;
         } else if (weatherId == 761 || weatherId == 781) {
-            return "storm";
+            return R.drawable.art_storm;
         } else if (weatherId == 800) {
-            return "clear";
+            return R.drawable.art_clear;
         } else if (weatherId == 801) {
-            return "light_clouds";
+            return R.drawable.art_light_clouds;
         } else if (weatherId >= 802 && weatherId <= 804) {
-            return "clouds";
+            return R.drawable.art_clouds;
         }
-        return null;
+        return -1;
     }
 
 
+
     public static String getImageUrlForWeatherCondition(int weatherId) {
-        // Based on weather code data found at:
-        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+
         if (weatherId >= 200 && weatherId <= 232) {
             return "http://upload.wikimedia.org/wikipedia/commons/2/28/Thunderstorm_in_Annemasse,_France.jpg";
         } else if (weatherId >= 300 && weatherId <= 321) {
@@ -471,12 +448,6 @@ public class WeatherUtils {
         return null;
     }
 
-    public static String getPreferredLocation(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(context.getString(R.string.pref_location_key),
-                context.getString(R.string.pref_location_default));
-    }
-
     public static boolean isMetric(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_units_key),
@@ -490,7 +461,7 @@ public class WeatherUtils {
      * @param c Context used to get the ConnectivityManager
      * @return true if the network is available
      */
-    static public boolean isNetworkAvailable(Context c) {
+    public static boolean isNetworkAvailable(Context c) {
         ConnectivityManager cm =
                 (ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -515,26 +486,32 @@ public class WeatherUtils {
     }
 
     /**
-     * Resets the location status.  (Sets it to SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN)
+     * Resets the location status.  (Sets it to SyncUtils.LOCATION_STATUS_UNKNOWN)
      * @param c Context used to get the SharedPreferences
      */
-    static public void resetLocationStatus(Context c){
+    public static void resetLocationStatus(Context c){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
         SharedPreferences.Editor spe = sp.edit();
         spe.putInt(c.getString(R.string.pref_location_status_key), SyncUtils.LOCATION_STATUS_UNKNOWN);
         spe.apply();
     }
 
-    /**
-     * Sets the location status into shared preference.  This function should not be called from
-     * the UI thread because it uses commit to write to the shared preferences.
-     * @param c Context to get the PreferenceManager from.
-     * @param locationStatus The IntDef value to set
-     */
-    static void setLocationStatus(Context c, @SyncUtils.LocationStatus int locationStatus){
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
-        SharedPreferences.Editor spe = sp.edit();
-        spe.putInt(c.getString(R.string.pref_location_status_key), locationStatus);
-        spe.apply();
+    public static void updateWidgets(Context context) {
+
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(SyncUtils.ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(dataUpdatedIntent);
+        }
     }
+
+    public static void updateMuzei(Context context ) {
+        // Muzei is only compatible with Jelly Bean MR1+ devices, so there's no need to update the
+        // Muzei background on lower API level devices
+            context.startService(new Intent(SyncUtils.ACTION_DATA_UPDATED)
+                    .setClass(context, WeatherMuzeiSource.class));
+    }
+
 }
