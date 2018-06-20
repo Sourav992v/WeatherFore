@@ -22,18 +22,8 @@ public class WeatherPreferences {
      * In order to uniquely pinpoint the location on the map when we launch the
      * map intent, we store the latitude and longitude.
      */
-    public static final String PREF_COORD_LAT = "coord_lat";
-    public static final String PREF_COORD_LONG = "coord_long";
-
-    /*
-     * Before you implement methods to return your REAL preference for location,
-     * we provide some default values to work with.
-     */
-    private static final String DEFAULT_WEATHER_LOCATION = "94043,USA";
-    private static final double[] DEFAULT_WEATHER_COORDINATES = {37.4284, 122.0724};
-
-    private static final String DEFAULT_MAP_LOCATION =
-            "1600 Amphitheatre Parkway, Mountain View, CA 94043";
+    private static final String PREF_COORD_LAT = "coord_lat";
+    private static final String PREF_COORD_LONG = "coord_long";
 
     /**
      * Helper method to handle setting location details in Preferences (city name, latitude,
@@ -53,20 +43,6 @@ public class WeatherPreferences {
         editor.putLong(PREF_COORD_LONG, Double.doubleToRawLongBits(lon));
         editor.apply();
     }
-
-    /**
-     * Helper method to handle setting a new location in preferences.  When this happens
-     * the database may need to be cleared.
-     *
-     * @param c               Context used to get the SharedPreferences
-     * @param locationSetting The location string used to request updates from the server.
-     * @param lat             The latitude of the city
-     * @param lon             The longitude of the city
-     */
-    static public void setLocation(Context c, String locationSetting, double lat, double lon) {
-
-    }
-
     /**
      * Resets the location coordinates stores in SharedPreferences.
      *
@@ -116,9 +92,9 @@ public class WeatherPreferences {
         String preferredUnits = prefs.getString(keyForUnits, defaultUnits);
         String metric = context.getString(R.string.pref_units_metric);
 
-        boolean userPreferesMetric;
-        userPreferesMetric = metric.equals(preferredUnits);
-        return  userPreferesMetric;
+        boolean userPrefersMetric;
+        userPrefersMetric = metric.equals(preferredUnits);
+        return userPrefersMetric;
     }
     /**
      * Returns the location coordinates associated with the location. Note that there is a
@@ -149,7 +125,6 @@ public class WeatherPreferences {
 
         return preferredCoordinates;
     }
-
     /**
      * Returns true if the latitude and longitude values are available. The latitude and
      * longitude will not be available until the lesson where the PlacePicker API is taught.
@@ -202,7 +177,7 @@ public class WeatherPreferences {
      * @param context Used to access SharedPreferences
      * @return UNIX time of when the last notification was shown
      */
-    public static long getLastNotificationTimeInMillis(Context context) {
+    private static long getLastNotificationTimeInMillis(Context context) {
         /* Key for accessing the time at which app last displayed a notification */
         String lastNotificationKey = context.getString(
                 R.string.pref_last_notification);
@@ -251,5 +226,4 @@ public class WeatherPreferences {
         editor.putLong(lastNotificationKey, timeOfNotification);
         editor.apply();
     }
-
 }
