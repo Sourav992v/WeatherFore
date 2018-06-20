@@ -13,10 +13,8 @@ import com.sourav.weatherfore.utilities.NetworkUtils;
 import com.sourav.weatherfore.utilities.NotificationUtils;
 import com.sourav.weatherfore.utilities.OpenWeatherJsonUtils;
 import com.sourav.weatherfore.utilities.WeatherUtils;
-import com.sourav.weatherfore.wallpaper.WeatherMuzeiSource;
 
 import java.net.URL;
-import java.util.TimeZone;
 
 /**
  * Created by Sourav on 11/20/2017.
@@ -44,6 +42,8 @@ class SyncTask {
 
             /* Use the URL to retrieve the JSON */
             String jsonWeatherResponse = NetworkUtils.getResponseFromHttpUrl(weatherRequestUrl);
+
+
             /* Parse the JSON into a list of weather values */
             ContentValues[] weatherValues = OpenWeatherJsonUtils
                     .getWeatherContentValuesFromJson(context,jsonWeatherResponse);
@@ -60,19 +60,22 @@ class SyncTask {
                  // If we have valid results, delete the old data and insert the new
                 /* Delete old weather data because we don't need to keep multiple days' data */
 
-                WeatherUtils.getPreferredLocation(context);
+                 WeatherPreferences.getPreferredWeatherLocation(context);
 
-                weatherForeContentResolver.delete(
-                        WeatherContract.WeatherEntry.CONTENT_URI,
-                        null,
-                        null);
+                 weatherForeContentResolver.delete(
+                         WeatherContract.WeatherEntry.CONTENT_URI,
+                         null,
+                         null);
 
 
-                weatherForeContentResolver.bulkInsert(
-                        WeatherContract.WeatherEntry.CONTENT_URI,
-                        weatherValues);
+                 weatherForeContentResolver.bulkInsert(
+                         WeatherContract.WeatherEntry.CONTENT_URI,
+                         weatherValues);
 
-                // Check if notifications are enabled
+
+                 WeatherUtils.updateWidgets(context);
+                 WeatherUtils.updateMuzei(context);
+                 // Check if notifications are enabled
                 /*
                  * Finally, after we insert data into the ContentProvider, determine whether or not
                  * we should notify the user that the weather has been refreshed.
@@ -100,9 +103,11 @@ class SyncTask {
                  * haven't shown a notification in the past day.
                  */
                  // If more than a day have passed and notifications are enabled, notify the user
-                 if (notificationsEnabled && oneDayPassedSinceLastNotification){
+                 if (notificationsEnabled && oneDayPassedSinceLastNotification) {
                      NotificationUtils.notifyUserOfNewWeather(context);
                  }
+             }else {
+                 SyncUtils.setLocationStatus(context,SyncUtils.LOCATION_STATUS_INVALID);
              }
         }catch (Exception e){
              /* Server probably invalid */
@@ -110,6 +115,4 @@ class SyncTask {
             e.printStackTrace();
         }
     }
-
-
 }

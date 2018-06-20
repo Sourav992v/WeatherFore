@@ -13,8 +13,8 @@
     <color name="weatherfore_dark_green">#FF6C8F1A</color>
 
     <!-- our detail accent colors -->
-    <color name="detail_accent_pane_background">#455A64</color>
-    <color name="detail_accent_label">#90A4AE</color>
+    <color name="detail_accent_pane_background">#263238</color>
+    <color name="detail_accent_label">#F1F8E9</color>
 
     <!-- the activated state color -->
     <color name="activated">#E0E0E0</color>

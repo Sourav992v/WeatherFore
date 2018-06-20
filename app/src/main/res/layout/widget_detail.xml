@@ -26,20 +26,21 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="8dp"
-        android:background="@color/primary_light">
+        android:background="@drawable/landscape">
         <ListView
             android:id="@+id/widget_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@null"
             android:dividerHeight="0dp"
+            android:background="@android:color/transparent"
             tools:listitem="@layout/widget_detail_list_item"/>
         <TextView
             android:id="@+id/widget_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:fontFamily="sans-serif-condensed"
+            android:fontFamily="@font/cookie_regular"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="@string/empty_forecast_list"/>
     </FrameLayout>

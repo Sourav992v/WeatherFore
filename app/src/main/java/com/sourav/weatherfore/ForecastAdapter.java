@@ -3,7 +3,6 @@ package com.sourav.weatherfore;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,7 +32,6 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     final private Context mContext;
     final private ForecastAdapterOnClickHandler mClickHandler;
     final private View mEmptyView;
-    final private ItemChoiceManager mICM;
 
 
     @Override
@@ -73,12 +71,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
                 defaultImage = WeatherUtils.getSmallArtResourceIdForWeatherCondition(weatherId);
         }
 
-            Glide.with(mContext)
-                    .load(WeatherUtils.getArtUrlForWeatherCondition(weatherId))
-                    .error(defaultImage)
-                    .crossFade()
-                    .into(holder.mIconView);
-
+        holder.mIconView.setImageResource(defaultImage);
         // this enables better animations. even if we lose state due to a device rotation,
         // the animator can use this to re-find the original view
         ViewCompat.setTransitionName(holder.mIconView, "iconView" + position);
@@ -87,7 +80,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         long dateInMillis = mCursor.getLong(ForecastFragment.COL_WEATHER_DATE);
 
         // Find TextView and set formatted date on it
-        holder.mDateView.setText(WeatherDateUtils.getFriendlyDateString(mContext, dateInMillis));
+        holder.mDateView.setText(WeatherDateUtils.getFriendlyDateString(mContext, dateInMillis,false));
 
         // Read weather forecast from cursor
         String description = WeatherUtils.getStringForWeatherCondition(mContext, weatherId);
@@ -111,33 +104,19 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         String lowString = WeatherUtils.formatTemperature(mContext, low);
         holder.mLowTempView.setText(lowString);
         holder.mLowTempView.setContentDescription(mContext.getString(R.string.a11y_low_temp, lowString));
-
-        mICM.onBindViewHolder(holder, position);
     }
-
-    void onRestoreInstanceState(Bundle savedInstanceState) {
-        mICM.onRestoreInstanceState(savedInstanceState);
-    }
-
-    void onSaveInstanceState(Bundle outState) {
-        mICM.onSaveInstanceState(outState);
-    }
-
     void setUseTodayLayout(boolean useTodayLayout) {
         mUseTodayLayout = useTodayLayout;
     }
 
-    int getSelectedItemPosition() {
-        return mICM.getSelectedItemPosition();
+    int getSelectedItemPosition(int position) {
+        return position;
     }
 
     @Override
     public int getItemViewType(int position) {
         return (position == 0 && mUseTodayLayout) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
     }
-
-
-
 
 
     void selectView(RecyclerView.ViewHolder viewHolder) {
@@ -171,7 +150,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
             mCursor.moveToPosition(adapterPosition);
             int dateColumnIndex = mCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE);
             mClickHandler.onClick(mCursor.getLong(dateColumnIndex), this);
-            mICM.onClick(this);
+            getSelectedItemPosition(adapterPosition);
         }
     }
     public interface ForecastAdapterOnClickHandler{
@@ -180,12 +159,10 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
 
     ForecastAdapter(Context mContext, ForecastAdapterOnClickHandler mClickHandler,
-                    View mEmptyView, int choiceMode) {
+                    View mEmptyView) {
         this.mContext = mContext;
         this.mClickHandler = mClickHandler;
         this.mEmptyView = mEmptyView;
-        mICM = new ItemChoiceManager(this);
-        mICM.setChoiceMode(choiceMode);
     }
 
     @Override

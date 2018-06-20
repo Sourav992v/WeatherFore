@@ -11,20 +11,19 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
+
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
+
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.Target;
 import com.sourav.weatherfore.MainActivity;
 import com.sourav.weatherfore.R;
 import com.sourav.weatherfore.db.WeatherContract;
+import com.sourav.weatherfore.db.WeatherPreferences;
 import com.sourav.weatherfore.utilities.WeatherUtils;
 
 
@@ -58,7 +57,7 @@ public class TodayWidgetIntentService extends IntentService {
                 TodayWidgetProvider.class));
 
         // Get today's data from the ContentProvider
-        String location = WeatherUtils.getPreferredLocation(this);
+        String location = WeatherPreferences.getPreferredWeatherLocation(this);
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
                 location, System.currentTimeMillis());
         Cursor data = getContentResolver().query(weatherForLocationUri, FORECAST_COLUMNS, null,
@@ -89,8 +88,6 @@ public class TodayWidgetIntentService extends IntentService {
             int layoutId;
             if (widgetWidth >= largeWidth) {
                 layoutId = R.layout.widget_today_large;
-            } else if (widgetWidth >= defaultWidth) {
-                layoutId = R.layout.widget_today;
             } else {
                 layoutId = R.layout.widget_today_small;
             }

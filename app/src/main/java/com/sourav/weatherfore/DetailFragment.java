@@ -6,16 +6,13 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,9 +24,9 @@ import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.sourav.weatherfore.db.WeatherContract;
 import com.sourav.weatherfore.db.WeatherContract.WeatherEntry;
+import com.sourav.weatherfore.db.WeatherPreferences;
 import com.sourav.weatherfore.utilities.WeatherDateUtils;
 import com.sourav.weatherfore.utilities.WeatherUtils;
 
@@ -39,7 +36,6 @@ import com.sourav.weatherfore.utilities.WeatherUtils;
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
     static final String DETAIL_URI = "URI";
 
     private boolean mTransitionAnimation;
@@ -48,7 +44,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final String FORECAST_SHARE_HASHTAG = "#WeatherForeApp";
     private boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
 
-    private ShareActionProvider mShareActionProvider;
     private String mForecast;
     private Uri mUri;
 
@@ -127,42 +122,45 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onResume() {
+        super.onResume();
         PreferenceManager.getDefaultSharedPreferences(getContext())
                 .registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
         PreferenceManager.getDefaultSharedPreferences(getContext())
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.detailfragment, menu);
 
-        // Retrieve the share menu item
-        MenuItem menuItem = menu.findItem(R.id.action_share);
-
-        // Get the provider and hold onto it to set/change the share intent.
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-
-        // If onLoadFinished happens before this, we can go ahead and set the share intent now.
-        if (mForecast != null) {
-            mShareActionProvider.setShareIntent(createShareForecastIntent());
+        if ( getActivity() instanceof DetailActivity ){
+            // Inflate the menu; this adds items to the action bar if it is present.
+            inflater.inflate(R.menu.detailfragment, menu);
         }
     }
 
-    private Intent createShareForecastIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mForecast + FORECAST_SHARE_HASHTAG);
-        return shareIntent;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                return true;
+            case R.id.action_share:
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, mForecast + FORECAST_SHARE_HASHTAG);
+                startActivity(shareIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -181,6 +179,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (null != mUri) {
@@ -203,8 +202,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         return null;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
         if (data != null && data.moveToFirst()) {
             ViewParent vp = getView().getParent();
             if (vp instanceof CardView) {
@@ -214,15 +215,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             // Read weather condition ID from cursor
             int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
 
-            Glide.with(this)
-                    .load(WeatherUtils.getArtUrlForWeatherCondition(weatherId))
-                    .error(WeatherUtils.getLargeArtResourceIdForWeatherCondition(weatherId))
-                    .crossFade()
-                    .into(mIconView);
+            mIconView.setImageResource(WeatherUtils.getArtResourceForWeatherCondition(weatherId));
 
             // Read date from cursor and update views for day of week and date
             long date = data.getLong(COL_WEATHER_DATE);
-            String dateText = WeatherDateUtils.getReadableDateString(getActivity(), date);
+            String dateText = WeatherDateUtils.getFriendlyDateString(getActivity(), date, true);
             mDateView.setText(dateText);
 
             // Get description from weather condition ID
@@ -235,9 +232,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             // null is appropriate when the image is purely decorative or when the image already
             // has text describing it in the same UI component.
             mIconView.setContentDescription(getString(R.string.a11y_forecast_icon, description));
-
-            // Read high temperature from cursor and update view
-            boolean isMetric = WeatherUtils.isMetric(getActivity());
 
             double high = data.getDouble(COL_WEATHER_MAX_TEMP);
             String highString = WeatherUtils.formatTemperature(getActivity(), high);
@@ -281,29 +275,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             activity.supportStartPostponedEnterTransition();
 
             if (null != toolbarView) {
+                activity.setSupportActionBar(toolbarView);
                 activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
                 activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                activity.getSupportActionBar().setTitle(WeatherPreferences
+                        .getPreferredWeatherLocation(getContext()));
             }
         } else {
             if (null != toolbarView) {
                 Menu menu = toolbarView.getMenu();
                 if (null != menu) menu.clear();
                 toolbarView.inflateMenu(R.menu.detailfragment);
-                finishCreatingMenu(toolbarView.getMenu());
             }
         }
-
-        // If onCreateOptionsMenu has already happened, we need to update the share intent now.
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(createShareForecastIntent());
-        }
     }
 
-    private void finishCreatingMenu(Menu menu) {
-        // Retrieve the share menu item
-        MenuItem menuItem = menu.findItem(R.id.action_share);
-        menuItem.setIntent(createShareForecastIntent());
-    }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {

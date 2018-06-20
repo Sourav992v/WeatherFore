@@ -18,6 +18,8 @@ import android.view.MenuItem;
  */
 public class SettingsActivity extends AppCompatActivity {
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

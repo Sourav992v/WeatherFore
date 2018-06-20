@@ -2,42 +2,42 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.sourav.weatherfore"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "AIzaSyDHPHcxISmUSKlg7EiS7PRnpLA1vlFlt1M")
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', "\"aec9ce9a58782e35ec0596b9042f41c6\""
+        it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY',MY_API_KEY
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.android.support:recyclerview-v7:26.1.0'
-    compile 'com.android.support:preference-v7:26.1.0'
-    compile 'com.firebase:firebase-jobdispatcher:0.5.2'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.android.support:gridlayout-v7:26.1.0'
-    compile 'com.android.support:cardview-v7:26.1.0'
-    compile 'com.google.android.apps.muzei:muzei-api:2.0'
-    compile 'com.android.support:support-annotations:27.1.0'
-    compile 'com.android.support:design:26.1.0'
-    compile 'com.google.android.gms:play-services-location:11.8.0'
-    compile 'com.google.android.gms:play-services-places:11.8.0'
-    compile 'com.google.android.gms:play-services-nearby:11.8.0'
-
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.android.support:preference-v7:26.1.0'
+    implementation 'com.firebase:firebase-jobdispatcher:0.5.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.android.support:gridlayout-v7:26.1.0'
+    implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.google.android.apps.muzei:muzei-api:2.0'
+    implementation 'com.android.support:support-annotations:27.1.1'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.google.android.gms:play-services-location:15.0.0'
+    implementation 'com.google.android.gms:play-services-places:15.0.0'
+    implementation 'com.google.android.gms:play-services-nearby:15.0.0'
 }

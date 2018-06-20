@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.sourav.weatherfore.ForecastFragment"
-    android:background="@color/primary_light">
+    android:id="@+id/fragment_main"
+    android:background="@drawable/portrait">
 
     <android.support.v7.widget.RecyclerView
         style="@style/ForecastListStyle"
@@ -13,11 +14,11 @@
         android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
     <!-- empty list -->
     <TextView
         android:id="@+id/forecast_empty_view"
         android:text="@string/empty_forecast_list"
+        android:fontFamily="@font/cookie_regular"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"

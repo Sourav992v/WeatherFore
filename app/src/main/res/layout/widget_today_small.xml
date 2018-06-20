@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/scrim_gradient"
+    android:background="@android:color/transparent"
     android:padding="@dimen/widget_margin">
 
     <LinearLayout
@@ -28,11 +28,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:fontFamily="sans-serif"
+            android:fontFamily="@font/lato_regular"
             android:textAppearance="?android:textAppearanceLarge"
             android:textColor="@color/cardview_light_background"
             tools:text="48"
-            android:textSize="@dimen/forecast_text_size"
-            android:gravity="center" />
+            android:textSize="@dimen/forecast_text_size"/>
     </LinearLayout>
 </FrameLayout>

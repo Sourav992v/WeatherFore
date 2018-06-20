@@ -1,8 +1,7 @@
 package com.sourav.weatherfore.widget;
 
 import android.annotation.TargetApi;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
+import android.app.Notification;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -11,6 +10,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.util.Log;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.sourav.weatherfore.R;
 import com.sourav.weatherfore.db.WeatherContract;
+import com.sourav.weatherfore.db.WeatherPreferences;
 import com.sourav.weatherfore.utilities.WeatherDateUtils;
 import com.sourav.weatherfore.utilities.WeatherUtils;
 
@@ -53,6 +54,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
 
             @Override
             public void onCreate() {
+                startForeground(1, new Notification());
             }
 
             @Override
@@ -65,7 +67,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 // data. Therefore we need to clear (and finally restore) the calling identity so
                 // that calls use our process and permission
                 final long identityToken = Binder.clearCallingIdentity();
-                String location = WeatherUtils.getPreferredLocation(DetailWidgetRemoteViewsService.this);
+                String location = WeatherPreferences.getPreferredWeatherLocation(DetailWidgetRemoteViewsService.this);
                 Uri weatherForLocationUri = WeatherContract.WeatherEntry
                         .buildWeatherLocationWithStartDate(location, System.currentTimeMillis());
                 data = getContentResolver().query(weatherForLocationUri,
@@ -100,32 +102,19 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 data.moveToPosition(position);
                 int weatherId = data.getInt(INDEX_WEATHER_CONDITION_ID);
                 int weatherArtResourceId = WeatherUtils.getSmallArtResourceIdForWeatherCondition(weatherId);
-                Bitmap weatherArtImage = null;
-                String weatherArtResourceUrl = WeatherUtils.getArtUrlForWeatherCondition(weatherId);
-                try {
-                    weatherArtImage = Glide.with(DetailWidgetRemoteViewsService.this)
-                            .load(weatherArtResourceUrl)
-                            .asBitmap()
-                            .error(weatherArtResourceId)
-                            .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
-                } catch (InterruptedException | ExecutionException e) {
-                    Log.e(LOG_TAG, "Error retrieving large icon from " + weatherArtResourceUrl, e);
-                }
+
                 String description = data.getString(INDEX_WEATHER_DESC);
                 long dateInMillis = data.getLong(INDEX_WEATHER_DATE);
                 String formattedDate = WeatherDateUtils.getFriendlyDateString(
-                        DetailWidgetRemoteViewsService.this, dateInMillis);
+                        DetailWidgetRemoteViewsService.this, dateInMillis,false);
                 double maxTemp = data.getDouble(INDEX_WEATHER_MAX_TEMP);
                 double minTemp = data.getDouble(INDEX_WEATHER_MIN_TEMP);
                 String formattedMaxTemperature =
                         WeatherUtils.formatTemperature(DetailWidgetRemoteViewsService.this, maxTemp);
                 String formattedMinTemperature =
                         WeatherUtils.formatTemperature(DetailWidgetRemoteViewsService.this, minTemp);
-                if (weatherArtImage != null) {
-                    views.setImageViewBitmap(R.id.widget_icon, weatherArtImage);
-                } else {
-                    views.setImageViewResource(R.id.widget_icon, weatherArtResourceId);
-                }
+
+                views.setImageViewResource(R.id.widget_icon, weatherArtResourceId);
                 setRemoteContentDescription(views, description);
                 views.setTextViewText(R.id.widget_date, formattedDate);
                 views.setTextViewText(R.id.widget_description, description);
@@ -134,7 +123,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
 
                 final Intent fillInIntent = new Intent();
                 String locationSetting =
-                        WeatherUtils.getPreferredLocation(DetailWidgetRemoteViewsService.this);
+                        WeatherPreferences.getPreferredWeatherLocation(DetailWidgetRemoteViewsService.this);
                 Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
                         locationSetting,
                         dateInMillis);
