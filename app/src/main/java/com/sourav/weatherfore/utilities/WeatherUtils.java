@@ -46,7 +46,7 @@ public class WeatherUtils {
      * "21°"
      */
     public static String formatTemperature(Context context, double temperature) {
-        if (!WeatherPreferences.isMetric(context)) {
+        if (WeatherPreferences.isMetric(context)) {
             temperature = celsiusToFahrenheit(temperature);
         }
 
@@ -70,7 +70,7 @@ public class WeatherUtils {
     public static String getFormattedWind(Context context, float windSpeed, float degrees) {
         int windFormat = R.string.format_wind_kmh;
 
-        if (!WeatherPreferences.isMetric(context)) {
+        if (WeatherPreferences.isMetric(context)) {
             windFormat = R.string.format_wind_mph;
             windSpeed = .621371192237334f * windSpeed;
         }

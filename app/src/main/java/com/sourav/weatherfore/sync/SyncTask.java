@@ -3,8 +3,6 @@ package com.sourav.weatherfore.sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.text.format.DateUtils;
 
 import com.sourav.weatherfore.db.WeatherContract;
@@ -59,8 +57,6 @@ class SyncTask {
                  ContentResolver weatherForeContentResolver = context.getContentResolver();
                  // If we have valid results, delete the old data and insert the new
                 /* Delete old weather data because we don't need to keep multiple days' data */
-
-                 WeatherPreferences.getPreferredWeatherLocation(context);
 
                  weatherForeContentResolver.delete(
                          WeatherContract.WeatherEntry.CONTENT_URI,

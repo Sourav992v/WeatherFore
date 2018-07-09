@@ -1,20 +1,9 @@
 package com.sourav.weatherfore;
-
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.RequiresApi;
-
-import com.sourav.weatherfore.sync.SyncUtils;
-import com.sourav.weatherfore.utilities.WeatherUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -50,11 +39,7 @@ class LocationResultHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
             if (addresses != null) {
-                sb.append(addresses.get(0).getSubAdminArea());
-                sb.append(", ");
                 sb.append(addresses.get(0).getLocality());
             }
 

@@ -27,6 +27,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.sourav.weatherfore.db.WeatherContract;
 import com.sourav.weatherfore.db.WeatherPreferences;
 
 import com.sourav.weatherfore.sync.SyncUtils;
@@ -57,6 +58,10 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mLocation = WeatherPreferences.getPreferredWeatherLocation(this);
+
+        Uri contentUri = getIntent() != null ? getIntent().getData() : null;
 
         // Check if the user revoked runtime permissions.
         if (!checkPermissions()) {
@@ -92,9 +97,15 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
+
         ForecastFragment forecastFragment = ((ForecastFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast));
         forecastFragment.setUseTodayLayout(!mTwoPane);
+
+        if (contentUri != null) {
+            forecastFragment.setInitialSelectedDate(
+                    WeatherContract.WeatherEntry.getDateFromUri(contentUri));
+        }
         SyncUtils.initialize(this);
     }
 
@@ -167,7 +178,8 @@ public class MainActivity extends AppCompatActivity implements
     public void onConnected(@Nullable Bundle bundle) {
         requestLocationUpdates();
         WeatherUtils.resetLocationStatus(this);
-        SyncUtils.syncImmediately(this);
+        WeatherPreferences.resetLocationCoordinates(this);
+        SyncUtils.startImmediateSync(this);
     }
 
     @Override
@@ -350,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.pref_location_key))){
-            SyncUtils.syncImmediately(this);
+            SyncUtils.startImmediateSync(this);
         }
     }
 }

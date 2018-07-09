@@ -41,7 +41,7 @@ public class WeatherPreferences {
 
         editor.putLong(PREF_COORD_LAT, Double.doubleToRawLongBits(lat));
         editor.putLong(PREF_COORD_LONG, Double.doubleToRawLongBits(lon));
-        editor.apply();
+        editor.commit();
     }
     /**
      * Resets the location coordinates stores in SharedPreferences.
@@ -54,7 +54,7 @@ public class WeatherPreferences {
 
         editor.remove(PREF_COORD_LAT);
         editor.remove(PREF_COORD_LONG);
-        editor.apply();
+        editor.commit();
     }
 
     /**
@@ -94,7 +94,7 @@ public class WeatherPreferences {
 
         boolean userPrefersMetric;
         userPrefersMetric = metric.equals(preferredUnits);
-        return userPrefersMetric;
+        return !userPrefersMetric;
     }
     /**
      * Returns the location coordinates associated with the location. Note that there is a
@@ -224,6 +224,6 @@ public class WeatherPreferences {
         SharedPreferences.Editor editor = sp.edit();
         String lastNotificationKey = context.getString(R.string.pref_last_notification);
         editor.putLong(lastNotificationKey, timeOfNotification);
-        editor.apply();
+        editor.commit();
     }
 }
