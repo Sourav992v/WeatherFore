@@ -36,6 +36,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.sourav.weatherfore.db.WeatherContract;
 import com.sourav.weatherfore.db.WeatherPreferences;
@@ -55,7 +56,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private RecyclerView mRecyclerView;
     private boolean mUseTodayLayout, mAutoSelectView;
     private boolean mHoldForTransition;
-    private long mInitialSelectedDate = -1;
+    private long mInitialSelectedDate = 0;
 
 
     private Parcelable mSaveInstance;
@@ -64,7 +65,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private int mPosition = RecyclerView.INVALID_TYPE;
 
     private static final String SELECTED_KEY = "selected_position";
-
+    private ProgressBar mLoadingIndicator;
 
     private static final int FORECAST_LOADER = 0;
     // For the forecast view we're showing only a small subset of the stored data.
@@ -99,6 +100,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
 
+    public void setInitialSelectedDate(long dateFromUri) {
+
+        mInitialSelectedDate = dateFromUri;
+    }
 
 
     /**
@@ -127,6 +132,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sp.registerOnSharedPreferenceChangeListener(this);
         super.onResume();
+        getLoaderManager().restartLoader(FORECAST_LOADER,null, this);
         mLayoutManager.onRestoreInstanceState(mSaveInstance);
     }
     @Override
@@ -184,6 +190,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // Get a reference to the RecyclerView, and attach this adapter to it.
         mRecyclerView = rootView.findViewById(R.id.recyclerview_forecast);
 
+        mLoadingIndicator = rootView.findViewById(R.id.loading_indicator);
+
         // Set the layout manager
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -209,6 +217,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         // specify an adapter (see also next example)
         mRecyclerView.setAdapter(mForecastAdapter);
+        showLoading();
 
         final View parallaxView = rootView.findViewById(R.id.parallax_bar);
         if (null != parallaxView) {
@@ -261,6 +270,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         return rootView;
     }
 
+    private void showLoading() {
+
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
@@ -276,12 +291,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     // since we read the location when we create the loader, all we need to do is restart things
     void onLocationChanged( ) {
-        updateWeather();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
-    }
-
-    private void updateWeather() {
-        SyncUtils.syncImmediately(getContext());
     }
 
     /**
@@ -362,6 +372,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             // to, do so now.
             mRecyclerView.smoothScrollToPosition(mPosition);
         }
+
+        if (data.getCount() != 0) showWeatherDataView();
         if ( data.getCount() == 0 ) {
             getActivity().supportStartPostponedEnterTransition();
         } else {
@@ -405,6 +417,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
     }
 
+    private void showWeatherDataView() {
+
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+    }
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -447,10 +466,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     case SyncUtils.LOCATION_STATUS_INVALID:
                         message = R.string.empty_forecast_list_invalid_location;
                         break;
+                    case SyncUtils.LOCATION_STATUS_OK:
+                        message = R.string.empty_forecast_list_valid_location;
+                        break;
+                    case SyncUtils.LOCATION_STATUS_UNKNOWN:
+                        message = R.string.empty_forecast_list_unknown_location;
+                        break;
                     default:
                         if (!WeatherUtils.isNetworkAvailable(getActivity())) {
                             message = R.string.empty_forecast_list_no_network;
                         }
+
                 }
                 tv.setText(message);
             }
